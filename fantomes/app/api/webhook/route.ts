@@ -1,14 +1,17 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!secretKey || !webhookSecret) {
-    console.error("Variables d'environnement webhook manquantes");
+  if (!secretKey || !webhookSecret || !supabaseUrl || !supabaseServiceKey) {
+    console.error("Variables d'environnement manquantes");
     return NextResponse.json(
       { error: "Configuration serveur incomplète" },
       { status: 500 }
@@ -16,6 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   const stripe = new Stripe(secretKey, { apiVersion: "2024-06-20" });
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
@@ -35,14 +39,34 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+    const email = session.customer_details?.email;
 
-    // Preuve que le paiement est confirmé côté serveur, pas sur la redirection.
-    // Étape 2 : ici on créera le compte Supabase et on enverra l'accès automatiquement.
-    console.log("✅ Paiement confirmé :", {
-      email: session.customer_details?.email,
-      montant_centimes: session.amount_total,
-      session_id: session.id,
+    if (!email) {
+      console.error("Paiement confirmé sans email", session.id);
+      return NextResponse.json({ received: true });
+    }
+
+    const { error: insertError } = await supabase.from("purchases").insert({
+      email,
+      stripe_session_id: session.id,
+      amount_cents: session.amount_total ?? 0,
+      status: "paid",
     });
+
+    if (!insertError) {
+      const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
+        email
+      );
+      if (inviteError) {
+        console.error("Erreur invitation Supabase", inviteError);
+      } else {
+        console.log("✅ Compte créé et email envoyé à", email);
+      }
+    } else if (insertError.code === "23505") {
+      console.log("Paiement déjà traité (doublon ignoré) :", session.id);
+    } else {
+      console.error("Erreur insertion purchases", insertError);
+    }
   }
 
   return NextResponse.json({ received: true });
