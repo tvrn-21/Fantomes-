@@ -33,7 +33,10 @@ export default function Compte() {
 
     async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithOtp({ email });
+        const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/compte` },
+    });
     if (error) {
       alert("Erreur : " + error.message);
     } else {
