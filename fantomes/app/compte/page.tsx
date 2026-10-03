@@ -10,6 +10,34 @@ type DetectedSub = {
   annual_amount_cents: number;
 };
 
+function buildLetter(label: string): string {
+  const today = new Date().toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  return `[Votre nom]
+[Votre adresse]
+
+${label}
+[Adresse du service — à compléter]
+
+Fait à [Votre ville], le ${today}
+
+Objet : Résiliation de mon abonnement
+
+Madame, Monsieur,
+
+Par la présente, je vous informe de ma décision de résilier mon abonnement à ${label}, à compter de ce jour.
+
+Je vous remercie de bien vouloir prendre en compte cette demande dans les meilleurs délais et de m'en confirmer la bonne réception par écrit.
+
+Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
+
+[Votre nom]`;
+}
+
 export default function Compte() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +49,8 @@ export default function Compte() {
   >("idle");
   const [lineCount, setLineCount] = useState(0);
   const [results, setResults] = useState<DetectedSub[]>([]);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -66,7 +96,12 @@ export default function Compte() {
     const parsed = rawLines.map((raw_line) => {
       const parts = raw_line.split(";");
       if (parts.length < 3) {
-        return { raw_line, label: null as string | null, amount_cents: null as number | null, line_date: null as string | null };
+        return {
+          raw_line,
+          label: null as string | null,
+          amount_cents: null as number | null,
+          line_date: null as string | null,
+        };
       }
       const [datePart, labelPart, amountPart] = parts;
       const dateMatch = datePart.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
@@ -74,9 +109,14 @@ export default function Compte() {
         ? `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`
         : null;
 
-      const normalizedAmount = amountPart.trim().replace(",", ".").replace(/\s/g, "");
+      const normalizedAmount = amountPart
+        .trim()
+        .replace(",", ".")
+        .replace(/\s/g, "");
       const amountFloat = parseFloat(normalizedAmount);
-      const amount_cents = isNaN(amountFloat) ? null : Math.round(amountFloat * 100);
+      const amount_cents = isNaN(amountFloat)
+        ? null
+        : Math.round(amountFloat * 100);
 
       return { raw_line, label: labelPart.trim(), amount_cents, line_date };
     });
@@ -113,7 +153,11 @@ export default function Compte() {
       if (existing) {
         existing.count += 1;
       } else {
-        groups.set(key, { label: p.label, amount_cents: p.amount_cents, count: 1 });
+        groups.set(key, {
+          label: p.label,
+          amount_cents: p.amount_cents,
+          count: 1,
+        });
       }
     }
 
@@ -144,6 +188,16 @@ export default function Compte() {
     setResults(detected);
     setLineCount(parsed.length);
     setUploadStatus("done");
+  }
+
+  async function handleCopy(index: number, text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch {
+      alert("Impossible de copier automatiquement — sélectionnez le texte manuellement.");
+    }
   }
 
   if (loading) {
@@ -188,7 +242,10 @@ export default function Compte() {
     );
   }
 
-  const totalAnnualCents = results.reduce((sum, r) => sum + r.annual_amount_cents, 0);
+  const totalAnnualCents = results.reduce(
+    (sum, r) => sum + r.annual_amount_cents,
+    0
+  );
 
   return (
     <main className="min-h-screen flex flex-col items-center px-6 py-16">
@@ -214,11 +271,37 @@ export default function Compte() {
             ) : (
               <ul className="text-left divide-y divide-ink/10 border-y border-ink/10">
                 {results.map((r, i) => (
-                  <li key={i} className="py-4 flex items-baseline justify-between">
-                    <span className="font-medium">{r.label}</span>
-                    <span className="text-ink/60 text-sm">
-                      {(r.annual_amount_cents / 100).toFixed(2)} €/an
-                    </span>
+                  <li key={i} className="py-4">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <span className="font-medium">{r.label}</span>
+                      <span className="text-ink/60 text-sm">
+                        {(r.annual_amount_cents / 100).toFixed(2)} €/an
+                      </span>
+                    </div>
+                    <button
+                      onClick={() =>
+                        setOpenIndex(openIndex === i ? null : i)
+                      }
+                      className="text-sm underline underline-offset-4 text-ink/70"
+                    >
+                      {openIndex === i
+                        ? "Masquer la lettre"
+                        : "Voir la lettre de résiliation"}
+                    </button>
+
+                    {openIndex === i && (
+                      <div className="mt-4 bg-white/60 border border-ink/10 rounded-xl p-4">
+                        <pre className="whitespace-pre-wrap text-sm text-ink/80 font-sans mb-4">
+                          {buildLetter(r.label)}
+                        </pre>
+                        <button
+                          onClick={() => handleCopy(i, buildLetter(r.label))}
+                          className="text-sm rounded-full bg-ink text-cream px-5 py-2 hover:bg-ink/85 transition-colors"
+                        >
+                          {copiedIndex === i ? "Copié ✓" : "Copier la lettre"}
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
