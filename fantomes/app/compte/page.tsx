@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
+type DetectedSub = {
+  label: string;
+  amount_cents: number;
+  occurrences: number;
+  annual_amount_cents: number;
+};
+
 export default function Compte() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -13,6 +20,7 @@ export default function Compte() {
     "idle" | "sending" | "done" | "error"
   >("idle");
   const [lineCount, setLineCount] = useState(0);
+  const [results, setResults] = useState<DetectedSub[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -31,9 +39,9 @@ export default function Compte() {
     };
   }, []);
 
-    async function handleSendLink(e: React.FormEvent) {
+  async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
-        const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: `${window.location.origin}/compte` },
     });
@@ -50,25 +58,92 @@ export default function Compte() {
 
     setUploadStatus("sending");
     const text = await file.text();
-    const lines = text
+    const rawLines = text
       .split("\n")
       .map((l) => l.trim())
       .filter((l) => l.length > 0);
 
-    const rows = lines.map((raw_line) => ({
+    const parsed = rawLines.map((raw_line) => {
+      const parts = raw_line.split(";");
+      if (parts.length < 3) {
+        return { raw_line, label: null as string | null, amount_cents: null as number | null, line_date: null as string | null };
+      }
+      const [datePart, labelPart, amountPart] = parts;
+      const dateMatch = datePart.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      const line_date = dateMatch
+        ? `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`
+        : null;
+
+      const normalizedAmount = amountPart.trim().replace(",", ".").replace(/\s/g, "");
+      const amountFloat = parseFloat(normalizedAmount);
+      const amount_cents = isNaN(amountFloat) ? null : Math.round(amountFloat * 100);
+
+      return { raw_line, label: labelPart.trim(), amount_cents, line_date };
+    });
+
+    const rows = parsed.map((p) => ({
       user_id: session.user.id,
-      raw_line,
+      raw_line: p.raw_line,
+      label: p.label,
+      amount_cents: p.amount_cents,
+      line_date: p.line_date,
     }));
 
-    const { error } = await supabase.from("statement_lines").insert(rows);
+    const { error: insertLinesError } = await supabase
+      .from("statement_lines")
+      .insert(rows);
 
-    if (error) {
-      console.error(error);
+    if (insertLinesError) {
+      console.error(insertLinesError);
       setUploadStatus("error");
-    } else {
-      setLineCount(lines.length);
-      setUploadStatus("done");
+      return;
     }
+
+    const groups = new Map<
+      string,
+      { label: string; amount_cents: number; count: number }
+    >();
+
+    for (const p of parsed) {
+      if (p.label === null || p.amount_cents === null) continue;
+      if (p.amount_cents >= 0) continue;
+
+      const key = `${p.label.toLowerCase()}|${p.amount_cents}`;
+      const existing = groups.get(key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        groups.set(key, { label: p.label, amount_cents: p.amount_cents, count: 1 });
+      }
+    }
+
+    const detected = Array.from(groups.values())
+      .filter((g) => g.count >= 2)
+      .map((g) => ({
+        label: g.label,
+        amount_cents: Math.abs(g.amount_cents),
+        occurrences: g.count,
+        annual_amount_cents: Math.abs(g.amount_cents) * 12,
+      }))
+      .sort((a, b) => b.annual_amount_cents - a.annual_amount_cents);
+
+    await supabase.from("subscriptions").delete().eq("user_id", session.user.id);
+
+    if (detected.length > 0) {
+      await supabase.from("subscriptions").insert(
+        detected.map((d) => ({
+          user_id: session.user.id,
+          label: d.label,
+          amount_cents: d.amount_cents,
+          occurrences: d.occurrences,
+          annual_amount_cents: d.annual_amount_cents,
+        }))
+      );
+    }
+
+    setResults(detected);
+    setLineCount(parsed.length);
+    setUploadStatus("done");
   }
 
   if (loading) {
@@ -113,52 +188,75 @@ export default function Compte() {
     );
   }
 
-  return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
-      <p className="font-serif italic text-lg mb-10">Fantômes</p>
+  const totalAnnualCents = results.reduce((sum, r) => sum + r.annual_amount_cents, 0);
 
-      {uploadStatus === "done" ? (
-        <>
-          <h1 className="font-serif text-2xl sm:text-3xl font-semibold mb-4 max-w-sm">
-            Relevé reçu — {lineCount} lignes enregistrées
-          </h1>
-          <p className="text-ink/70 max-w-sm">
-            On analyse vos prélèvements. Cette partie arrive à l&rsquo;étape
-            suivante du produit.
-          </p>
-        </>
-      ) : (
-        <>
-          <h1 className="font-serif text-2xl sm:text-3xl font-semibold mb-6 max-w-sm">
-            Déposez votre relevé bancaire
-          </h1>
-          <p className="text-ink/70 max-w-sm mb-10">
-            Exportez votre relevé au format CSV depuis votre banque en ligne,
-            puis déposez-le ici.
-          </p>
-          <form onSubmit={handleUpload} className="w-full max-w-xs space-y-4">
-            <input
-              type="file"
-              accept=".csv,text/csv"
-              required
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm"
-            />
-            <button
-              type="submit"
-              disabled={uploadStatus === "sending"}
-              className="w-full rounded-full bg-ink text-cream font-medium px-8 py-3 hover:bg-ink/85 transition-colors disabled:opacity-50"
-            >
-              {uploadStatus === "sending" ? "Envoi…" : "Envoyer mon relevé"}
-            </button>
-            {uploadStatus === "error" && (
-              <p className="text-sm text-red-600">
-                Une erreur est survenue, réessayez.
+  return (
+    <main className="min-h-screen flex flex-col items-center px-6 py-16">
+      <div className="w-full max-w-md text-center">
+        <p className="font-serif italic text-lg mb-10">Fantômes</p>
+
+        {uploadStatus === "done" ? (
+          <>
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold mb-2">
+              {results.length} abonnement{results.length > 1 ? "s" : ""} détecté
+              {results.length > 1 ? "s" : ""}
+            </h1>
+            {results.length > 0 && (
+              <p className="text-ink/70 mb-10">
+                Soit {(totalAnnualCents / 100).toFixed(2)} € par an
               </p>
             )}
-          </form>
-        </>
-      )}
+
+            {results.length === 0 ? (
+              <p className="text-ink/70">
+                Aucun prélèvement répété trouvé sur ces {lineCount} lignes.
+              </p>
+            ) : (
+              <ul className="text-left divide-y divide-ink/10 border-y border-ink/10">
+                {results.map((r, i) => (
+                  <li key={i} className="py-4 flex items-baseline justify-between">
+                    <span className="font-medium">{r.label}</span>
+                    <span className="text-ink/60 text-sm">
+                      {(r.annual_amount_cents / 100).toFixed(2)} €/an
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <>
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold mb-6">
+              Déposez votre relevé bancaire
+            </h1>
+            <p className="text-ink/70 mb-10">
+              Exportez votre relevé au format CSV depuis votre banque en ligne,
+              puis déposez-le ici.
+            </p>
+            <form onSubmit={handleUpload} className="space-y-4">
+              <input
+                type="file"
+                accept=".csv,text/csv"
+                required
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                className="w-full text-sm"
+              />
+              <button
+                type="submit"
+                disabled={uploadStatus === "sending"}
+                className="w-full rounded-full bg-ink text-cream font-medium px-8 py-3 hover:bg-ink/85 transition-colors disabled:opacity-50"
+              >
+                {uploadStatus === "sending" ? "Analyse…" : "Envoyer mon relevé"}
+              </button>
+              {uploadStatus === "error" && (
+                <p className="text-sm text-red-600">
+                  Une erreur est survenue, réessayez.
+                </p>
+              )}
+            </form>
+          </>
+        )}
+      </div>
     </main>
   );
 }
