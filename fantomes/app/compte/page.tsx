@@ -31,10 +31,14 @@ export default function Compte() {
     };
   }, []);
 
-  async function handleSendLink(e: React.FormEvent) {
+    async function handleSendLink(e: React.FormEvent) {
     e.preventDefault();
-    await supabase.auth.signInWithOtp({ email });
-    setLinkSent(true);
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      setLinkSent(true);
+    }
   }
 
   async function handleUpload(e: React.FormEvent) {
