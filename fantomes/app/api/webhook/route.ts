@@ -54,8 +54,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (!insertError) {
-      const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
-        email
+            const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
+        email,
+        { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/compte` }
       );
       if (inviteError) {
         console.error("Erreur invitation Supabase", inviteError);
