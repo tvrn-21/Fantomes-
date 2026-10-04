@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Public_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -36,9 +38,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${fraunces.variable} ${publicSans.variable} font-sans bg-cream text-ink antialiased`}
+        className={`${fraunces.variable} ${publicSans.variable} font-sans bg-cream text-ink antialiased flex flex-col min-h-screen`}
       >
-        {children}
+        <div className="flex-1">{children}</div>
+        <Footer />
+        <Analytics />
       </body>
     </html>
   );
