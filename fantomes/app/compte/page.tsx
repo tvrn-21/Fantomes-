@@ -265,9 +265,16 @@ export default function Compte() {
             )}
 
             {results.length === 0 ? (
-              <p className="text-ink/70">
-                Aucun prélèvement répété trouvé sur ces {lineCount} lignes.
-              </p>
+                         <div className="text-ink/70 space-y-3">
+                <p>
+                  Aucun prélèvement répété trouvé sur ces {lineCount} lignes.
+                </p>
+                <p className="text-sm">
+                  Essayez avec un relevé couvrant une période plus longue
+                  (3 à 6 mois) : certains abonnements annuels ou trimestriels
+                  n&rsquo;apparaissent qu&rsquo;une fois sur un mois seul.
+                </p>
+              </div>
             ) : (
               <ul className="text-left divide-y divide-ink/10 border-y border-ink/10">
                 {results.map((r, i) => (
