@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 export default function Home({
   searchParams,
 }: {
@@ -23,7 +24,7 @@ export default function Home({
           </p>
         )}
 
-        <p className="font-serif italic text-lg mb-10">Fantômes</p>
+             <Logo />
 
         <h1 className="font-serif text-[2.3rem] leading-[1.15] sm:text-5xl sm:leading-[1.1] font-semibold mb-6 max-w-md">
           Vous payez certainement des abonnements que vous n&rsquo;utilisez
