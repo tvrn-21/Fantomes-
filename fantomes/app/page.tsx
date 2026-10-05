@@ -47,6 +47,11 @@ export default function Home({
           <Benefit title="On rédige la résiliation">
             Une lettre prête à envoyer pour chaque abonnement inutile.
           </Benefit>
+          <Benefit title="Comment trouver votre relever bancaire et le télécharger sous le boon format ?">
+            Depuis votre banque en ligne, allez dans relever de compte, et ensuite trouver le bouton, télécharger les données du compte, choisissez la durée souhaiter ( 1 ans recommander et telecharger, ce sera en format pdf. Allez ensuite sur l'IA de votre choix pour transformet le fichier pdv en fichier.csv
+            </Benefit>
+            <Benefit title="Des questions ?">
+              si vous avez des questions sur quoi qe ce soit, vous pouvez ecrire un mail a l'adresse ci-dessous, nous vous réponderons le plus rapidement possible. fantomes.admin@gmail.com
         </ul>
 
         <a
