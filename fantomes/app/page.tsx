@@ -52,6 +52,7 @@ export default function Home({
             </Benefit>
             <Benefit title="Des questions ?">
               si vous avez des questions sur quoi qe ce soit, vous pouvez ecrire un mail a l'adresse ci-dessous, nous vous réponderons le plus rapidement possible. fantomes.admin@gmail.com
+          </Benefit>
         </ul>
 
         <a
