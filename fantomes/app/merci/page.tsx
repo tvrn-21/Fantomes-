@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 export default function Merci() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
