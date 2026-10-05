@@ -2,7 +2,7 @@ import Logo from "@/components/Logo";
 export default function Merci() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 text-center">
-      <p className="font-serif italic text-lg mb-10">Fantômes</p>
+            <Logo />
       <h1 className="font-serif text-3xl sm:text-4xl font-semibold mb-6 max-w-md leading-tight">
         Paiement reçu. Votre audit est en route.
       </h1>
