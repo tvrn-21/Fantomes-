@@ -10,13 +10,13 @@ export default function MentionsLegales() {
         <section>
           <h2 className="font-semibold text-ink mb-2">Éditeur du site</h2>
           <p>
-            [À COMPLÉTER — nom et prénom]
+            Varrin Thomas
             <br />
             Indépendant, domicilié en Suisse
             <br />
             Adresse : [À COMPLÉTER]
             <br />
-            Email de contact : [À COMPLÉTER]
+            Email de contact : fantomes.admin@gmail.com
             <br />
             Numéro IDE (si applicable) : [À COMPLÉTER]
           </p>
