@@ -26,7 +26,7 @@ export default function Home({
         <p className="font-serif italic text-lg mb-10">Fantômes</p>
 
         <h1 className="font-serif text-[2.3rem] leading-[1.15] sm:text-5xl sm:leading-[1.1] font-semibold mb-6 max-w-md">
-          Vous payez sans doute pour des abonnements que vous n&rsquo;utilisez
+          Vous payez certainement des abonnements que vous n&rsquo;utilisez
           plus
         </h1>
 
@@ -38,7 +38,7 @@ export default function Home({
 
         <ul className="mb-12 divide-y divide-ink/10 border-y border-ink/10">
           <Benefit title="On lit votre relevé bancaire">
-            Déposez-le, on repère les prélèvements réguliers.
+            Déposez-le, on repère les prélèvements réguliers. nous ne voyons aucune données personelle, nous voyons uniquement les paiment qui sont dans le relevé bancaire
           </Benefit>
           <Benefit title="On chiffre ce que ça vous coûte">
             Chaque abonnement classé par montant annuel, pas mensuel — pour
@@ -47,8 +47,8 @@ export default function Home({
           <Benefit title="On rédige la résiliation">
             Une lettre prête à envoyer pour chaque abonnement inutile.
           </Benefit>
-          <Benefit title="Comment trouver votre relever bancaire et le télécharger sous le boon format ?">
-            Depuis votre banque en ligne, allez dans relever de compte, et ensuite trouver le bouton, télécharger les données du compte, choisissez la durée souhaiter ( 1 ans recommander et telecharger, ce sera en format pdf. Allez ensuite sur l'IA de votre choix pour transformet le fichier pdv en fichier.csv
+          <Benefit title="Comment trouver votre relever bancaire et le télécharger sous le bon format ?">
+            Depuis votre banque en ligne, allez dans relever de compte, et ensuite trouver le bouton télécharger les données du compte, choisissez la durée souhaiter (1 ans recommander) et telecharger, ce sera en format pdf. Allez ensuite sur l'IA de votre choix pour transformet le fichier pdf en fichier.csv
             </Benefit>
             <Benefit title="Des questions ?">
               si vous avez des questions sur quoi qe ce soit, vous pouvez ecrire un mail a l'adresse ci-dessous, nous vous réponderons le plus rapidement possible. fantomes.admin@gmail.com
