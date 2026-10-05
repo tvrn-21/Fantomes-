@@ -251,7 +251,7 @@ export default function Compte() {
   return (
     <main className="min-h-screen flex flex-col items-center px-6 py-16">
       <div className="w-full max-w-md text-center">
-            <Logo />
+                    <p className="font-serif italic text-lg mb-10">Fantômes</p>
 
         {uploadStatus === "done" ? (
           <>
