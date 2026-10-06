@@ -56,11 +56,15 @@ export default function Home({
           </Benefit>
         </ul>
 
+               <p className="mb-3 text-sm font-medium text-gold">
+          Offre de lancement
+        </p>
         <a
           href="/api/checkout"
           className="inline-flex items-center justify-center rounded-full bg-ink text-cream font-medium text-lg px-8 py-4 hover:bg-ink/85 transition-colors w-full sm:w-auto"
         >
-          Débusquer mes Fantômes — 19&nbsp;€
+          Débusquer mes Fantômes —{" "}
+          <span className="line-through opacity-50 mr-1">19 €</span> 9&nbsp;€
         </a>
         <p className="mt-4 text-sm text-ink/50">
           Paiement unique, sans engagement.
