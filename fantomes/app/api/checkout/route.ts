@@ -30,7 +30,7 @@ export async function GET() {
               description:
                 "Analyse de votre relevé bancaire et détection de vos abonnements oubliés.",
             },
-            unit_amount: 1900,
+                        unit_amount: 900,
           },
           quantity: 1,
         },
