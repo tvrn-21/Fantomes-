@@ -121,7 +121,7 @@ function Benefit({
   children: React.ReactNode;
 }) {
   return (
-    <li className="animate-fade-up py-5 flex gap-4 items-start" style={{ animationDelay: delay }}>
+       <li className="animate-fade-up py-6 flex gap-5 items-start" style={{ animationDelay: delay }}>
       <div className="shrink-0 w-9 h-9 rounded-full bg-ink/5 flex items-center justify-center text-ink/70">
         {icon}
       </div>
