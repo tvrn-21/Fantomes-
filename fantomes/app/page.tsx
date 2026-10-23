@@ -10,6 +10,10 @@ export default function Home({
 
   return (
     <main className="min-h-screen flex flex-col overflow-hidden">
+            <div className="absolute top-16 left-8 w-16 h-16 rounded-full border-2 border-gold/30 pointer-events-none hidden md:block" />
+      <div className="absolute bottom-24 left-24 w-3 h-3 rounded-full bg-gold/60 pointer-events-none hidden md:block" />
+      <div className="absolute top-1/3 right-12 w-10 h-10 border-2 border-ink/15 rotate-45 pointer-events-none hidden md:block" />
+      <div className="absolute bottom-16 right-1/3 w-24 h-24 rounded-full bg-ink/5 pointer-events-none hidden md:block" />
             <div className="mx-auto w-full max-w-6xl flex-1 grid md:grid-cols-2 md:gap-24 items-center px-6 sm:px-10 lg:px-20 py-20 md:py-32">
         <div className="max-w-xl mx-auto md:mx-0 text-center md:text-left">
           {(paiementErreur || paiementAnnule) && (
