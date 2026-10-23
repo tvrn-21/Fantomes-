@@ -63,7 +63,7 @@ export default function Home({
           href="/api/checkout"
           className="inline-flex items-center justify-center rounded-full bg-ink text-cream font-medium text-lg px-8 py-4 hover:bg-ink/85 transition-colors w-full sm:w-auto"
         >
-          Débusquer mes Fantômes —{" "}
+          Débusquer mes abonnements —{" "}
           <span className="line-through opacity-50 mr-1">19 €</span> 9&nbsp;€
         </a>
         <p className="mt-4 text-sm text-ink/50">
