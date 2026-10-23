@@ -94,7 +94,7 @@ export default function Home({
                  A18.75,18.75 0 0 1 112.5,225
                  A18.75,18.75 0 0 1 75,225
                  Z"
-              fill="#241B40"
+              fill="#C68A2E"
             />
             <ellipse cx="123" cy="150" rx="10.5" ry="13.5" fill="#FAF6EF" />
             <ellipse cx="177" cy="150" rx="10.5" ry="13.5" fill="#FAF6EF" />
