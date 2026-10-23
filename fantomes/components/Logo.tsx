@@ -2,7 +2,7 @@ export default function Logo() {
   return (
     <svg
       viewBox="0 0 420 110"
-      className="h-8 w-auto mx-auto mb-10"
+            className="h-8 w-auto mx-auto mb-10 animate-float"
       role="img"
       aria-label="Fantômes"
     >
