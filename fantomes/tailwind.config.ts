@@ -6,8 +6,8 @@ const config: Config = {
     extend: {
       colors: {
         ink: "#000000",
-        gold: "#515250",
-        cream: "#515250",
+        gold: "#C8AD7F",
+        cream: "#C8AD7F",
       },
       fontFamily: {
         serif: ["var(--font-fraunces)", "Georgia", "serif"],
