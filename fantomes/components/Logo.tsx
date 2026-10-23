@@ -15,7 +15,7 @@ export default function Logo() {
            A8.75,8.75 0 0 1 32.5,95
            A8.75,8.75 0 0 1 15,95
            Z"
-        fill="#C68A2E"
+        fill="#000000"
       />
       <ellipse cx="38" cy="58" rx="5" ry="6.5" fill="#FAF6EF" />
       <ellipse cx="62" cy="58" rx="5" ry="6.5" fill="#FAF6EF" />
