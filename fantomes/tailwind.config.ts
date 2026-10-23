@@ -7,7 +7,7 @@ const config: Config = {
       colors: {
         ink: "#C68A2E",
         gold: "#C67B2E",
-        cream: "#431F4B",
+        cream: "#000000",
       },
       fontFamily: {
         serif: ["var(--font-fraunces)", "Georgia", "serif"],
