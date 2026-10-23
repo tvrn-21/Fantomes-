@@ -9,7 +9,7 @@ export default function Home({
   const paiementErreur = searchParams.paiement === "erreur";
 
   return (
-    <main     <main className="min-h-screen flex flex-col overflow-hidden relative">
+        <main className="min-h-screen flex flex-col overflow-hidden relative">
             <div className="absolute top-16 left-8 w-16 h-16 rounded-full border-2 border-gold/30 pointer-events-none hidden md:block" />
       <div className="absolute bottom-24 left-24 w-3 h-3 rounded-full bg-gold/60 pointer-events-none hidden md:block" />
       <div className="absolute top-1/3 right-12 w-10 h-10 border-2 border-ink/15 rotate-45 pointer-events-none hidden md:block" />
