@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo";
+
 export default function Home({
   searchParams,
 }: {
@@ -8,8 +9,13 @@ export default function Home({
   const paiementErreur = searchParams.paiement === "erreur";
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <div className="mx-auto w-full max-w-xl flex-1 flex flex-col justify-center px-6 py-14">
+    <main className="min-h-screen flex flex-col overflow-hidden relative">
+      <div
+        className="absolute top-[-120px] right-[-100px] w-[320px] h-[320px] rounded-full opacity-[0.08] pointer-events-none"
+        style={{ background: "radial-gradient(circle, #C68A2E, transparent 70%)" }}
+      />
+
+      <div className="mx-auto w-full max-w-xl flex-1 flex flex-col justify-center px-6 py-14 relative">
         {(paiementErreur || paiementAnnule) && (
           <p
             className={`mb-8 rounded-lg px-4 py-3 text-sm ${
@@ -24,67 +30,127 @@ export default function Home({
           </p>
         )}
 
-             <Logo />
+        <Logo />
 
-        <h1 className="font-serif text-[2.3rem] leading-[1.15] sm:text-5xl sm:leading-[1.1] font-semibold mb-6 max-w-md">
-          Vous payez certainement des abonnements que vous n&rsquo;utilisez
+        <h1 className="animate-fade-up font-serif text-[2.3rem] leading-[1.15] sm:text-5xl sm:leading-[1.1] font-semibold mb-6 max-w-md">
+          Vous payez sans doute pour des abonnements que vous n&rsquo;utilisez
           plus
         </h1>
 
-        <p className="text-lg text-ink/70 max-w-md mb-12 leading-relaxed">
+        <p
+          className="animate-fade-up text-lg text-ink/70 max-w-md mb-12 leading-relaxed"
+          style={{ animationDelay: "0.1s" }}
+        >
           Un essai jamais résilié, un service remplacé, une option activée
           une fois. Trop petits pour se voir sur un relevé, ils tournent
           pendant des années.
         </p>
 
         <ul className="mb-12 divide-y divide-ink/10 border-y border-ink/10">
-          <Benefit title="On lit votre relevé bancaire">
-            Déposez-le, on repère les prélèvements réguliers. nous ne voyons aucune données personelle, nous voyons uniquement les paiment qui sont dans le relevé bancaire
+          <Benefit
+            icon={<IconDocument />}
+            title="On lit votre relevé bancaire"
+            delay="0.2s"
+          >
+            Déposez-le, on repère les prélèvements réguliers.
           </Benefit>
-          <Benefit title="On chiffre ce que ça vous coûte">
+          <Benefit
+            icon={<IconChart />}
+            title="On chiffre ce que ça vous coûte"
+            delay="0.3s"
+          >
             Chaque abonnement classé par montant annuel, pas mensuel — pour
             voir le vrai coût.
           </Benefit>
-          <Benefit title="On rédige la résiliation">
+          <Benefit
+            icon={<IconLetter />}
+            title="On rédige la résiliation"
+            delay="0.4s"
+          >
             Une lettre prête à envoyer pour chaque abonnement inutile.
-          </Benefit>
-          <Benefit title="Comment trouver votre relever bancaire et le télécharger sous le bon format ?">
-            Depuis votre banque en ligne, allez dans relever de compte, et ensuite trouver le bouton télécharger les données du compte, choisissez la durée souhaiter (1 ans recommander) et telecharger, ce sera en format pdf. Allez ensuite sur l'IA de votre choix pour transformet le fichier pdf en fichier.csv
-            </Benefit>
-            <Benefit title="Des questions ?">
-              si vous avez des questions sur quoi qe ce soit, vous pouvez ecrire un mail a l'adresse ci-dessous, nous vous réponderons le plus rapidement possible. fantomes.admin@gmail.com
           </Benefit>
         </ul>
 
-               <p className="mb-3 text-sm font-medium text-gold">
-          Offre de lancement
-        </p>
-        <a
-          href="/api/checkout"
-          className="inline-flex items-center justify-center rounded-full bg-ink text-cream font-medium text-lg px-8 py-4 hover:bg-ink/85 transition-colors w-full sm:w-auto"
+        <div
+          className="animate-fade-up"
+          style={{ animationDelay: "0.5s" }}
         >
-          Débusquer mes abonnements —{" "}
-          <span className="line-through opacity-50 mr-1">19 €</span> 9&nbsp;€
-        </a>
-        <p className="mt-4 text-sm text-ink/50">
-          Paiement unique, sans engagement.
-        </p>
+          <p className="mb-3 text-sm font-medium text-gold">
+            Offre de lancement
+          </p>
+          <a
+            href="/api/checkout"
+            className="inline-flex items-center justify-center rounded-full bg-ink text-cream font-medium text-lg px-8 py-4 hover:bg-ink/85 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto"
+          >
+            Débusquer mes Fantômes —{" "}
+            <span className="line-through opacity-50 mr-1">19 €</span> 9&nbsp;€
+          </a>
+          <p className="mt-4 text-sm text-ink/50">
+            Paiement unique, sans engagement.
+          </p>
+        </div>
       </div>
     </main>
   );
 }
 
 function Benefit({
+  icon,
   title,
+  delay,
   children,
 }: {
+  icon: React.ReactNode;
   title: string;
+  delay: string;
   children: React.ReactNode;
 }) {
   return (
-    <li className="py-5">
-      <p className="font-medium mb-1">{title}</p>
-      <p className="text-sm text-ink/60 leading-relaxed">{children}</p>
+    <li
+      className="animate-fade-up py-5 flex gap-4 items-start"
+      style={{ animationDelay: delay }}
+    >
+      <div className="shrink-0 w-9 h-9 rounded-full bg-ink/5 flex items-center justify-center text-ink/70">
+        {icon}
+      </div>
+      <div>
+        <p className="font-medium mb-1">{title}</p>
+        <p className="text-sm text-ink/60 leading-relaxed">{children}</p>
+      </div>
     </li>
   );
 }
+
+function IconDocument() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M14 2v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M8 13h8M8 17h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconChart() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M4 20V10M12 20V4M20 20v-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M2 20h20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconLetter() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M3 7l9 6 9-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+ 
