@@ -44,7 +44,7 @@ export default function Home({
             pendant des années.
           </p>
 
-          <ul className="mb-12 divide-y divide-ink/10 border-y border-ink/10 text-left">
+                   <ul className="mb-14 divide-y divide-ink/10 border-y border-ink/10 text-left">
             <Benefit icon={<IconDocument />} title="On lit votre relevé bancaire" delay="0.2s">
               Déposez-le, on repère les prélèvements réguliers.
             </Benefit>
