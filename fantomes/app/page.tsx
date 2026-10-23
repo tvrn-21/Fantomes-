@@ -10,7 +10,7 @@ export default function Home({
 
   return (
     <main className="min-h-screen flex flex-col overflow-hidden">
-      <div className="mx-auto w-full max-w-5xl flex-1 grid md:grid-cols-2 md:gap-16 items-center px-6 py-16 md:py-24">
+            <div className="mx-auto w-full max-w-6xl flex-1 grid md:grid-cols-2 md:gap-24 items-center px-6 sm:px-10 lg:px-20 py-20 md:py-32">
         <div className="max-w-xl mx-auto md:mx-0 text-center md:text-left">
           {(paiementErreur || paiementAnnule) && (
             <p
